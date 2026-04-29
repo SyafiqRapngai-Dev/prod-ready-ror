@@ -1,0 +1,25 @@
+<%= turbo_frame_tag dom_id(comment) do %>
+  <div class="flex items-start space-x-3">
+    <div class="w-7 h-7 rounded-full bg-indigo-400 flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+      <%= comment.user.initials %>
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-baseline space-x-2 mb-1">
+        <span class="text-sm font-medium text-gray-900"><%= comment.user.name %></span>
+        <span class="text-xs text-gray-400"><%= time_ago_in_words(comment.created_at) %> ago</span>
+      </div>
+      <div class="bg-gray-50 rounded-lg px-3 py-2">
+        <p class="text-sm text-gray-700 whitespace-pre-wrap"><%= comment.body %></p>
+      </div>
+      <% if comment.user == current_user %>
+        <div class="flex items-center space-x-3 mt-1 ml-1">
+          <%= link_to "Edit", "#", class: "text-xs text-gray-400 hover:text-gray-600" %>
+          <%= button_to "Delete", organization_project_task_comment_path(organization, project, task, comment),
+                        method: :delete,
+                        data: { turbo_confirm: "Delete this comment?" },
+                        class: "text-xs text-gray-400 hover:text-red-600 bg-transparent border-none p-0 cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

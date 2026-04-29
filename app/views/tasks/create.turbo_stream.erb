@@ -1,0 +1,3 @@
+<%= turbo_stream.append "column_#{@task.column_id}_tasks",
+      partial: "tasks/task_card",
+      locals: { task: @task, organization: @organization, project: @project } %>

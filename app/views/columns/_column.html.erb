@@ -1,0 +1,45 @@
+<%= turbo_frame_tag dom_id(column) do %>
+  <div class="w-72 flex-shrink-0 bg-gray-100 rounded-xl flex flex-col max-h-full"
+       data-column-id="<%= column.id %>"
+       data-drag-target="column">
+
+    <%# Column header %>
+    <div class="flex items-center justify-between px-3 py-2.5 flex-shrink-0">
+      <div class="flex items-center space-x-2">
+        <% if column.color.present? %>
+          <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: <%= column.color %>"></span>
+        <% end %>
+        <h3 class="text-sm font-semibold text-gray-700"><%= column.name %></h3>
+        <span class="text-xs text-gray-400 font-medium"><%= column.tasks.root_tasks.size %></span>
+      </div>
+      <div class="flex items-center space-x-1">
+        <%= link_to new_organization_project_task_path(organization, project, column_id: column.id),
+                    class: "p-1 text-gray-400 hover:text-gray-600 rounded" do %>
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Task cards %>
+    <div class="flex-1 overflow-y-auto px-2 pb-2 space-y-2 min-h-16"
+         data-drag-target="taskList"
+         data-column-id="<%= column.id %>">
+      <% column.tasks.root_tasks.ordered.each do |task| %>
+        <%= render "tasks/task_card", task: task, organization: organization, project: project %>
+      <% end %>
+    </div>
+
+    <%# Add task shortcut %>
+    <div class="px-2 pb-2 flex-shrink-0">
+      <%= link_to new_organization_project_task_path(organization, project, column_id: column.id),
+                  class: "flex items-center w-full px-2 py-1.5 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg" do %>
+        <svg class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Add task
+      <% end %>
+    </div>
+  </div>
+<% end %>

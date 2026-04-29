@@ -1,0 +1,77 @@
+<%= form_with model: [@organization, @project, task],
+              id: "task_form",
+              class: "space-y-4" do |f| %>
+
+  <% if task.errors.any? %>
+    <div class="p-3 rounded-md bg-red-50 border border-red-200">
+      <ul class="text-sm text-red-700 list-disc list-inside space-y-1">
+        <% task.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :title, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :title,
+                     class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm",
+                     placeholder: "Task title" %>
+  </div>
+
+  <div>
+    <%= f.label :description, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_area :description, rows: 4,
+                    class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm",
+                    placeholder: "Describe the task..." %>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= f.label :column_id, "Column", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.select :column_id,
+                   columns.map { |c| [c.name, c.id] },
+                   { selected: task.column_id },
+                   class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm" %>
+    </div>
+
+    <div>
+      <%= f.label :priority, class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.select :priority,
+                   Task.priorities.keys.map { |p| [p.humanize, p] },
+                   {},
+                   class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :due_date, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.date_field :due_date,
+                     class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm" %>
+  </div>
+
+  <% if labels.any? %>
+    <div>
+      <span class="block text-sm font-medium text-gray-700 mb-2">Labels</span>
+      <div class="flex flex-wrap gap-2">
+        <% labels.each do |label| %>
+          <label class="flex items-center space-x-1.5 cursor-pointer">
+            <%= check_box_tag "task[label_ids][]", label.id,
+                              task.labels.include?(label),
+                              class: "h-4 w-4 text-indigo-600 border-gray-300 rounded",
+                              id: "label_#{label.id}" %>
+            <span class="flex items-center space-x-1 text-sm text-gray-700">
+              <span class="w-3 h-3 rounded-full" style="background-color: <%= label.color %>"></span>
+              <span><%= label.name %></span>
+            </span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="flex justify-end space-x-3 pt-2">
+    <%= link_to "Cancel", :back, class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+    <%= f.submit class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 cursor-pointer" %>
+  </div>
+<% end %>

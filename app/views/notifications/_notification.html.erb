@@ -1,0 +1,16 @@
+<%= turbo_frame_tag dom_id(notification) do %>
+  <div class="bg-white rounded-xl border <%= notification.unread? ? "border-indigo-200 bg-indigo-50/30" : "border-gray-200" %> px-4 py-3 flex items-start space-x-3">
+    <div class="w-8 h-8 rounded-full bg-indigo-400 flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
+      <%= notification.actor.initials %>
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm text-gray-900"><%= notification.display_message %></p>
+      <p class="text-xs text-gray-400 mt-0.5"><%= time_ago_in_words(notification.created_at) %> ago</p>
+    </div>
+    <% if notification.unread? %>
+      <%= button_to "Mark read", mark_read_notification_path(notification),
+                    method: :patch,
+                    class: "text-xs text-indigo-600 hover:text-indigo-800 bg-transparent border-none p-0 flex-shrink-0 cursor-pointer" %>
+    <% end %>
+  </div>
+<% end %>

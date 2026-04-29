@@ -1,0 +1,4 @@
+<%# After a move, refresh the entire board to reflect new order %>
+<%= turbo_stream.replace "board_columns",
+      partial: "boards/columns",
+      locals: { columns: @board.columns.ordered, organization: @organization, project: @project, board: @board } %>

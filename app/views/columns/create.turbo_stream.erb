@@ -1,0 +1,4 @@
+<%= turbo_stream.append "columns_list",
+      partial: "columns/column",
+      locals: { column: @column, organization: @organization, project: @project, board: @board } %>
+<%= turbo_stream.replace "new_column", "" %>

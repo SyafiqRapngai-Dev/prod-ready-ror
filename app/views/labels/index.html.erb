@@ -1,0 +1,32 @@
+<% content_for :title, "Labels — #{@project.name}" %>
+
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center justify-between mb-5">
+    <h1 class="text-xl font-bold text-gray-900">Labels</h1>
+    <%= link_to "New Label", new_organization_project_label_path(@organization, @project),
+                class: "px-3 py-1.5 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700" %>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 divide-y divide-gray-100">
+    <% if @labels.empty? %>
+      <div class="px-5 py-8 text-center text-sm text-gray-400">No labels created yet.</div>
+    <% else %>
+      <% @labels.each do |label| %>
+        <div class="flex items-center justify-between px-5 py-3">
+          <div class="flex items-center space-x-3">
+            <span class="w-4 h-4 rounded-full flex-shrink-0" style="background-color: <%= label.color %>"></span>
+            <span class="text-sm font-medium text-gray-900"><%= label.name %></span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <%= link_to "Edit", edit_organization_project_label_path(@organization, @project, label),
+                        class: "text-sm text-gray-500 hover:text-gray-700" %>
+            <%= button_to "Delete", organization_project_label_path(@organization, @project, label),
+                          method: :delete,
+                          data: { turbo_confirm: "Delete label '#{label.name}'?" },
+                          class: "text-sm text-red-500 hover:text-red-700 bg-transparent border-none p-0 cursor-pointer" %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

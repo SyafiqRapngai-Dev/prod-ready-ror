@@ -1,0 +1,31 @@
+<% content_for :title, "Notifications" %>
+
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center justify-between mb-5">
+    <h1 class="text-xl font-bold text-gray-900">Notifications</h1>
+    <% if @notifications.any? %>
+      <%= button_to "Mark all as read", mark_all_read_notifications_path,
+                    method: :patch,
+                    class: "px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer" %>
+    <% end %>
+  </div>
+
+  <div id="notifications" class="space-y-2">
+    <% if @notifications.empty? %>
+      <div class="bg-white rounded-xl border border-gray-200 px-5 py-8 text-center text-sm text-gray-400">
+        No notifications yet.
+      </div>
+    <% else %>
+      <% @notifications.each do |notification| %>
+        <%= render "notifications/notification", notification: notification %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Pagy pagination %>
+  <% if @pagy && @pagy.pages > 1 %>
+    <div class="mt-5 flex justify-center">
+      <%== pagy_nav(@pagy) %>
+    </div>
+  <% end %>
+</div>

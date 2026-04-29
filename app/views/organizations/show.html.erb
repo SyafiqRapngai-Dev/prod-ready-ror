@@ -1,0 +1,70 @@
+<% content_for :title, @organization.name %>
+
+<div class="space-y-6">
+  <%# Header %>
+  <div class="flex items-start justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @organization.name %></h1>
+      <% if @organization.description.present? %>
+        <p class="text-sm text-gray-500 mt-1"><%= @organization.description %></p>
+      <% end %>
+    </div>
+    <div class="flex items-center space-x-2">
+      <%= link_to "Settings", edit_organization_path(@organization),
+                  class: "px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50" %>
+      <%= link_to "+ New Project", new_organization_project_path(@organization),
+                  class: "px-3 py-1.5 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700" %>
+    </div>
+  </div>
+
+  <%# Projects grid %>
+  <div>
+    <h2 class="text-base font-semibold text-gray-900 mb-3">Projects</h2>
+    <% if @projects.empty? %>
+      <div class="bg-white rounded-xl border-2 border-dashed border-gray-300 p-8 text-center">
+        <p class="text-sm text-gray-500 mb-3">No projects yet.</p>
+        <%= link_to "Create your first project", new_organization_project_path(@organization),
+                    class: "text-sm font-medium text-indigo-600 hover:text-indigo-800" %>
+      </div>
+    <% else %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <% @projects.each do |project| %>
+          <%= link_to organization_project_path(@organization, project),
+                      class: "bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow block" do %>
+            <div class="flex items-start justify-between mb-2">
+              <span class="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded"><%= project.key %></span>
+              <span class="text-xs px-2 py-0.5 rounded-full <%= project.active? ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600" %>">
+                <%= project.status.humanize %>
+              </span>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900 mb-1"><%= project.name %></h3>
+            <% if project.description.present? %>
+              <p class="text-xs text-gray-500 line-clamp-2"><%= project.description %></p>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Members section %>
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-base font-semibold text-gray-900">Members (<%= @members.size %>)</h2>
+      <%= link_to "Manage members", organization_memberships_path(@organization),
+                  class: "text-sm text-indigo-600 hover:text-indigo-800" %>
+    </div>
+    <div class="flex -space-x-2">
+      <% @members.first(8).each do |membership| %>
+        <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-medium border-2 border-white" title="<%= membership.user.name %>">
+          <%= membership.user.initials %>
+        </div>
+      <% end %>
+      <% if @members.size > 8 %>
+        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-xs font-medium border-2 border-white">
+          +<%= @members.size - 8 %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

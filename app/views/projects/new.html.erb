@@ -1,0 +1,11 @@
+<% content_for :title, "New Project" %>
+
+<div class="max-w-lg mx-auto">
+  <div class="mb-4">
+    <h1 class="text-xl font-bold text-gray-900">Create Project</h1>
+    <p class="text-sm text-gray-500 mt-1">A project belongs to <%= @organization.name %>.</p>
+  </div>
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 px-6 py-5">
+    <%= render "projects/form", organization: @organization, project: @project %>
+  </div>
+</div>

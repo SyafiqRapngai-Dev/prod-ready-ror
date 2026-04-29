@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "new_column" do %>
+  <div class="w-72 flex-shrink-0 bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">New Column</h3>
+    <%= render "columns/form",
+               column: @column,
+               board: @board,
+               organization: @organization,
+               project: @project %>
+  </div>
+<% end %>

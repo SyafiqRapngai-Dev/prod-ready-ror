@@ -1,0 +1,112 @@
+<% content_for :title, "Dashboard" %>
+
+<div class="space-y-6">
+  <%# Page header %>
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">Good <%= time_of_day_greeting %>, <%= current_user.name.split.first %>!</h1>
+    <p class="mt-1 text-sm text-gray-500">Here's what's on your plate today.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <%# Assigned tasks %>
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="text-base font-semibold text-gray-900">My Upcoming Tasks</h2>
+          <span class="text-xs text-gray-500"><%= @assigned_tasks.size %> tasks</span>
+        </div>
+
+        <% if @assigned_tasks.any? %>
+          <ul class="divide-y divide-gray-100">
+            <% @assigned_tasks.each do |task| %>
+              <li class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start space-x-3 min-w-0">
+                    <%# Priority indicator %>
+                    <div class="flex-shrink-0 mt-0.5">
+                      <% badge_color = { "urgent" => "bg-red-100 text-red-700", "high" => "bg-orange-100 text-orange-700", "medium" => "bg-yellow-100 text-yellow-700", "low" => "bg-gray-100 text-gray-600" } %>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <%= badge_color[task.priority] %>">
+                        <%= task.priority.capitalize %>
+                      </span>
+                    </div>
+                    <div class="min-w-0">
+                      <%= link_to task.title,
+                                  organization_project_task_path(task.project.organization, task.project, task),
+                                  class: "text-sm font-medium text-gray-900 hover:text-indigo-600 truncate block" %>
+                      <p class="text-xs text-gray-500 mt-0.5">
+                        <span class="font-mono text-indigo-500"><%= task.project.key %></span>
+                        · <%= task.column.name %>
+                      </p>
+                    </div>
+                  </div>
+                  <% if task.due_date %>
+                    <span class="flex-shrink-0 ml-4 text-xs <%= task.due_date < Date.current ? "text-red-600 font-medium" : "text-gray-500" %>">
+                      <%= task.due_date.strftime("%b %-d") %>
+                    </span>
+                  <% end %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="px-6 py-12 text-center">
+            <svg class="mx-auto h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <p class="mt-3 text-sm text-gray-500">No upcoming tasks assigned to you</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Sidebar: notifications + organizations %>
+    <div class="space-y-6">
+      <%# Recent notifications %>
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="text-base font-semibold text-gray-900">Notifications</h2>
+          <%= link_to "View all", notifications_path, class: "text-xs text-indigo-600 hover:text-indigo-500" %>
+        </div>
+        <% if @recent_notifications.any? %>
+          <ul class="divide-y divide-gray-100">
+            <% @recent_notifications.each do |notification| %>
+              <li class="px-6 py-3">
+                <p class="text-sm text-gray-800"><%= notification.display_message %></p>
+                <p class="text-xs text-gray-400 mt-0.5"><%= time_ago_in_words(notification.created_at) %> ago</p>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="px-6 py-8 text-center">
+            <p class="text-sm text-gray-500">No new notifications</p>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Organizations %>
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="text-base font-semibold text-gray-900">Organizations</h2>
+          <%= link_to new_organization_path, class: "text-xs text-indigo-600 hover:text-indigo-500" do %>
+            + New
+          <% end %>
+        </div>
+        <ul class="divide-y divide-gray-100">
+          <% @organizations.each do |org| %>
+            <li>
+              <%= link_to org, class: "flex items-center px-6 py-3 hover:bg-gray-50" do %>
+                <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 text-xs font-bold flex items-center justify-center mr-3 flex-shrink-0">
+                  <%= org.name.first.upcase %>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate"><%= org.name %></p>
+                  <p class="text-xs text-gray-500"><%= pluralize(org.projects.count, "project") %></p>
+                </div>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

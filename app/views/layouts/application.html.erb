@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+  <head>
+    <title><%= content_for(:title) || "ProjectFlow" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <link rel="icon" href="/icon.png" type="image/png">
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="h-full flex overflow-hidden">
+    <% if user_signed_in? %>
+      <%# Sidebar navigation %>
+      <%= render "layouts/sidebar" %>
+
+      <%# Main content area %>
+      <div class="flex flex-col flex-1 overflow-hidden">
+        <%= render "layouts/topbar" %>
+
+        <%# Flash messages %>
+        <%= render "layouts/flash" %>
+
+        <%# Page content %>
+        <main class="flex-1 overflow-y-auto p-6">
+          <%= yield %>
+        </main>
+      </div>
+    <% else %>
+      <div class="flex-1">
+        <%= render "layouts/flash" %>
+        <%= yield %>
+      </div>
+    <% end %>
+  </body>
+</html>

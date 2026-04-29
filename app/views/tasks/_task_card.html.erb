@@ -1,0 +1,63 @@
+<%= turbo_frame_tag dom_id(task) do %>
+  <%= link_to organization_project_task_path(organization, project, task),
+              class: "block bg-white rounded-lg shadow-sm border border-gray-200 p-3 hover:shadow-md transition-shadow cursor-pointer group",
+              data: {
+                drag_target: "task",
+                task_id: task.id,
+                turbo_frame: "task_modal"
+              } do %>
+
+    <%# Labels %>
+    <% if task.labels.any? %>
+      <div class="flex flex-wrap gap-1 mb-2">
+        <% task.labels.each do |label| %>
+          <span class="inline-block px-1.5 py-0.5 text-xs font-medium rounded text-white"
+                style="background-color: <%= label.color %>">
+            <%= label.name %>
+          </span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# Task title %>
+    <p class="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-indigo-700"><%= task.title %></p>
+
+    <%# Meta row %>
+    <div class="flex items-center justify-between mt-2.5">
+      <div class="flex items-center space-x-1.5">
+        <%# Priority badge %>
+        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium
+          <%= case task.priority
+              when "urgent" then "bg-red-100 text-red-700"
+              when "high"   then "bg-orange-100 text-orange-700"
+              when "medium" then "bg-yellow-100 text-yellow-700"
+              else               "bg-gray-100 text-gray-600"
+              end %>">
+          <%= task.priority.humanize %>
+        </span>
+
+        <%# Due date %>
+        <% if task.due_date %>
+          <span class="text-xs <%= task.due_date < Date.current ? "text-red-600 font-medium" : "text-gray-400" %>">
+            <%= task.due_date.strftime("%b %-d") %>
+          </span>
+        <% end %>
+      </div>
+
+      <%# Assignee avatars %>
+      <div class="flex -space-x-1">
+        <% task.assignees.first(3).each do |assignee| %>
+          <div class="w-5 h-5 rounded-full bg-indigo-400 flex items-center justify-center text-white text-xs border border-white"
+               title="<%= assignee.name %>">
+            <%= assignee.initials.first %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Subtask count %>
+    <% if task.subtasks.any? %>
+      <p class="mt-1 text-xs text-gray-400"><%= task.subtasks.size %> subtask(s)</p>
+    <% end %>
+  <% end %>
+<% end %>

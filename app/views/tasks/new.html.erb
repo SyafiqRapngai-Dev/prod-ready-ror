@@ -1,0 +1,17 @@
+<% content_for :title, "New Task — #{@project.name}" %>
+
+<div class="max-w-2xl mx-auto">
+  <div class="mb-4">
+    <h1 class="text-xl font-bold text-gray-900">New Task</h1>
+    <p class="text-sm text-gray-500 mt-1">Adding to <span class="font-mono text-indigo-600"><%= @project.key %></span> · <%= @project.name %></p>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 px-6 py-5">
+    <%= render "tasks/form",
+               task: @task,
+               organization: @organization,
+               project: @project,
+               columns: @columns,
+               labels: @labels %>
+  </div>
+</div>

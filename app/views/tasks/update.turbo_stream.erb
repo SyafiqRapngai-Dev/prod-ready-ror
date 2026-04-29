@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@task),
+      partial: "tasks/task_card",
+      locals: { task: @task, organization: @organization, project: @project } %>

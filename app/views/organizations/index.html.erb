@@ -1,0 +1,37 @@
+<% content_for :title, "Organizations" %>
+
+<div>
+  <div class="flex items-center justify-between mb-5">
+    <h1 class="text-2xl font-bold text-gray-900">Organizations</h1>
+    <%= link_to "New Organization", new_organization_path,
+                class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700" %>
+  </div>
+
+  <% if @organizations.empty? %>
+    <div class="bg-white rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
+      <h3 class="text-sm font-medium text-gray-900 mb-1">No organizations yet</h3>
+      <p class="text-sm text-gray-500 mb-4">Create your first organization to start managing projects.</p>
+      <%= link_to "Create Organization", new_organization_path, class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700" %>
+    </div>
+  <% else %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <% @organizations.each do |org| %>
+        <%= link_to org, class: "bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow block" do %>
+          <div class="flex items-center mb-3">
+            <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
+              <%= org.name.first.upcase %>
+            </div>
+            <div class="ml-3 min-w-0">
+              <h3 class="text-sm font-semibold text-gray-900 truncate"><%= org.name %></h3>
+              <p class="text-xs text-gray-500 font-mono">/<%= org.slug %></p>
+            </div>
+          </div>
+          <% if org.description.present? %>
+            <p class="text-xs text-gray-500 line-clamp-2 mb-2"><%= org.description %></p>
+          <% end %>
+          <p class="text-xs text-gray-400"><%= pluralize(org.projects.active.count, "project") %></p>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
