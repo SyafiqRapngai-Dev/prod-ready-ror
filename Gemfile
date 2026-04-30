@@ -34,7 +34,7 @@ gem "image_processing", "~> 1.2"
 gem "pagy", "~> 9.0"
 
 group :development, :test do
-  gem "rspec-rails", "~> 7.0"
+  gem "rspec-rails", "~> 8.0"
   gem "factory_bot_rails", "~> 6.4"
   gem "faker", "~> 3.4"
   gem "dotenv-rails", "~> 3.1"
