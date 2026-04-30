@@ -22,7 +22,7 @@ gem "pundit", "~> 2.5"
 # Background Jobs
 # gem "sidekiq", "~> 7.3"
 # gem "redis", "~> 5.0"
-gem "connection_pool", "~> 2.4"
+gem "connection_pool", "~> 3.0"
 
 # Search
 gem "pg_search", "~> 2.3"
