@@ -1,0 +1,7 @@
+<div class="w-72 flex-shrink-0">
+  <%= link_to new_organization_project_board_column_path(organization, project, board),
+              class: "flex items-center justify-center w-full h-12 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-400 hover:border-gray-400 hover:text-gray-600",
+              data: { turbo_frame: "new_column" } do %>
+    + Add Column
+  <% end %>
+</div>

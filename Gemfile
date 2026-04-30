@@ -20,8 +20,8 @@ gem "devise", "~> 4.9"
 gem "pundit", "~> 2.5"
 
 # Background Jobs
-gem "sidekiq", "~> 7.3"
-gem "redis", "~> 5.0"
+# gem "sidekiq", "~> 7.3"
+# gem "redis", "~> 5.0"
 gem "connection_pool", "~> 2.4"
 
 # Search

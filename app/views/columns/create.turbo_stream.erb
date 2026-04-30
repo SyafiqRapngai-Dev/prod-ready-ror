@@ -1,4 +1,6 @@
-<%= turbo_stream.append "columns_list",
+<%= turbo_stream.before "new_column",
       partial: "columns/column",
       locals: { column: @column, organization: @organization, project: @project, board: @board } %>
-<%= turbo_stream.replace "new_column", "" %>
+<%= turbo_stream.update "new_column" do %>
+  <%= render "columns/add_button", organization: @organization, project: @project, board: @board %>
+<% end %>

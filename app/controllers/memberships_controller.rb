@@ -4,7 +4,7 @@ class MembershipsController < ApplicationController
 
   def index
     @memberships = @organization.memberships.includes(:user)
-    authorize @memberships
+    authorize @organization.memberships.build, :index?
   end
 
   def new

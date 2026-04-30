@@ -5,7 +5,7 @@ class LabelsController < ApplicationController
 
   def index
     @labels = @project.labels
-    authorize Label
+    authorize @project.labels.build, :index?
   end
 
   def show

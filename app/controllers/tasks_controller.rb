@@ -5,7 +5,7 @@ class TasksController < ApplicationController
 
   def index
     @pagy, @tasks = pagy(
-      @project.tasks.root_tasks.includes(:column, :assignees, :labels, :creator).ordered
+      policy_scope(@project.tasks).root_tasks.includes(:column, :assignees, :labels, :creator).ordered
     )
   end
 
@@ -32,10 +32,8 @@ class TasksController < ApplicationController
     if @task.save
       ActivityLogJob.perform_later("Task", @task.id, current_user.id, "created", { title: @task.title })
 
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to organization_project_task_path(@organization, @project, @task), notice: "Task was successfully created." }
-      end
+      board = @task.column&.board || @project.boards.first
+      redirect_to organization_project_board_path(@organization, @project, board), status: :see_other, notice: "Task was successfully created."
     else
       @columns = @project.boards.first&.columns&.ordered || Column.none
       @labels  = @project.labels
@@ -58,16 +56,12 @@ class TasksController < ApplicationController
     if @task.update(task_params)
       ActivityLogJob.perform_later("Task", @task.id, current_user.id, "updated", { title: @task.title })
 
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to organization_project_task_path(@organization, @project, @task), notice: "Task was successfully updated." }
-      end
+      board = @task.column.board
+      redirect_to organization_project_board_path(@organization, @project, board), status: :see_other, notice: "Task was successfully updated."
     else
       @columns = @project.boards.first&.columns&.ordered || Column.none
       @labels  = @project.labels
-      respond_to do |format|
-        format.html { render :edit, status: :unprocessable_entity }
-      end
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -84,9 +78,11 @@ class TasksController < ApplicationController
 
   def move
     authorize @task, :update?
+    target_column = Column.joins(board: :project).find_by(id: params[:column_id], boards: { project_id: @project.id })
+    return head :forbidden unless target_column
 
     @task.update!(
-      column_id: params[:column_id],
+      column_id: target_column.id,
       position:  params[:position].to_f
     )
 

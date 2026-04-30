@@ -27,25 +27,19 @@
     </div>
   </div>
 
-  <%# New column turbo frame (empty initially, populated by clicking + Add Column) %>
-  <%= turbo_frame_tag "new_column" %>
-
   <%# Kanban columns - horizontal scroll %>
   <div class="flex-1 overflow-x-auto">
-    <div class="flex h-full px-6 py-4 space-x-4 items-start min-w-max"
+    <div id="columns_list"
+         class="flex h-full px-6 py-4 space-x-4 items-start min-w-max"
          data-controller="drag">
       <% @columns.each do |column| %>
         <%= render "columns/column", column: column, organization: @organization, project: @project, board: @board %>
       <% end %>
 
-      <%# Add column shortcut %>
-      <div class="w-72 flex-shrink-0">
-        <%= link_to new_organization_project_board_column_path(@organization, @project, @board),
-                    class: "flex items-center justify-center w-full h-12 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-400 hover:border-gray-400 hover:text-gray-600",
-                    data: { turbo_frame: "new_column" } do %>
-          + Add Column
-        <% end %>
-      </div>
+      <%# New column form appears here, inline with existing columns %>
+      <%= turbo_frame_tag "new_column" do %>
+        <%= render "columns/add_button", organization: @organization, project: @project, board: @board %>
+      <% end %>
     </div>
   </div>
 </div>

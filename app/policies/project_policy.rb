@@ -29,13 +29,15 @@ class ProjectPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.joins(:organization)
-           .joins("INNER JOIN memberships ON memberships.organization_id = organizations.id AND memberships.user_id = #{user.id}")
-           .or(
-             scope.joins(:project_members)
-                  .where(project_members: { user_id: user.id })
-           )
-           .distinct
+      org_project_ids = scope.joins(:organization)
+                             .joins("INNER JOIN memberships ON memberships.organization_id = organizations.id AND memberships.user_id = #{user.id.to_i}")
+                             .select(:id)
+
+      member_project_ids = scope.joins(:project_members)
+                                .where(project_members: { user_id: user.id })
+                                .select(:id)
+
+      scope.where(id: org_project_ids).or(scope.where(id: member_project_ids)).distinct
     end
   end
 

@@ -6,7 +6,7 @@ class Column < ApplicationRecord
   validates :name, presence: true
   validates :position, presence: true, numericality: { only_integer: true, greater_than: 0 }
 
-  before_create :set_position
+  before_validation :set_position, on: :create
 
   scope :ordered, -> { order(:position) }
 

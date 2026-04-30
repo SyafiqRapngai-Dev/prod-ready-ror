@@ -14,7 +14,8 @@
       </div>
       <div class="flex items-center space-x-1">
         <%= link_to new_organization_project_task_path(organization, project, column_id: column.id),
-                    class: "p-1 text-gray-400 hover:text-gray-600 rounded" do %>
+                    class: "p-1 text-gray-400 hover:text-gray-600 rounded",
+                    data: { turbo_frame: "_top" } do %>
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
@@ -34,7 +35,8 @@
     <%# Add task shortcut %>
     <div class="px-2 pb-2 flex-shrink-0">
       <%= link_to new_organization_project_task_path(organization, project, column_id: column.id),
-                  class: "flex items-center w-full px-2 py-1.5 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg" do %>
+                  class: "flex items-center w-full px-2 py-1.5 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg",
+                  data: { turbo_frame: "_top" } do %>
         <svg class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
