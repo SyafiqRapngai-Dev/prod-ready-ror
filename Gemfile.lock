@@ -229,7 +229,7 @@ GEM
       nio4r (~> 2.0)
     pundit (2.5.2)
       activesupport (>= 3.0.0)
-    pundit-matchers (3.1.2)
+    pundit-matchers (4.0.0)
       rspec-core (~> 3.12)
       rspec-expectations (~> 3.12)
       rspec-mocks (~> 3.12)
@@ -415,7 +415,7 @@ DEPENDENCIES
   propshaft
   puma (>= 6.0)
   pundit (~> 2.5)
-  pundit-matchers (~> 3.1)
+  pundit-matchers (~> 4.0)
   rails (~> 8.0.4)
   rspec-rails (~> 7.0)
   rubocop-rails-omakase
@@ -523,7 +523,7 @@ CHECKSUMS
   public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
   puma (8.0.1) sha256=7b94e50c07655718c1fb8ae41a11fc06c7d61293208b3aa608ff71a46d3ad37c
   pundit (2.5.2) sha256=e374152baa24f90b630428293faf4b4c5468fc3cc010165f7d8fcb44ce108bbd
-  pundit-matchers (3.1.2) sha256=f8e935c34f45f5294c10d01f4f534793f9b90ad2dc7f3502f050463bf9bdbb3e
+  pundit-matchers (4.0.0) sha256=59d6077a1d575ea7cceca3ed73df5257488ee1a111ec707b2a797e76908cffd5
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
   rack (3.2.6) sha256=5ed78e1f73b2e25679bec7d45ee2d4483cc4146eb1be0264fc4d94cb5ef212c2
   rack-session (2.1.2) sha256=595434f8c0c3473ae7d7ac56ecda6cc6dfd9d37c0b2b5255330aa1576967ffe8

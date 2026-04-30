@@ -45,7 +45,7 @@ group :test do
   gem "shoulda-matchers", "~> 6.2"
   gem "capybara", "~> 3.40"
   gem "selenium-webdriver", "~> 4.25"
-  gem "pundit-matchers", "~> 3.1"
+  gem "pundit-matchers", "~> 4.0"
 end
 
 group :development do
