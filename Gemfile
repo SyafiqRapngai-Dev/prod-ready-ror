@@ -16,7 +16,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 
 # Auth / Authz
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 gem "pundit", "~> 2.5"
 
 # Background Jobs
