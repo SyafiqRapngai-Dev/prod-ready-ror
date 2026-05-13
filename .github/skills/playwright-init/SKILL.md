@@ -7,9 +7,9 @@ description: 'Use when initializing a new Playwright project from scratch, or wh
 
 ## When to Use
 
-- A `package.json` exists but `@playwright/test` is not installed
-- `playwright.config.ts` / `playwright.config.js` is missing
-- The `tests/` folder does not exist
+- An `e2e/package.json` exists but `@playwright/test` is not installed
+- `e2e/playwright.config.ts` / `e2e/playwright.config.js` is missing
+- The `e2e/tests/` folder does not exist
 - The user asks to set up Playwright from scratch
 
 ---
@@ -18,12 +18,12 @@ description: 'Use when initializing a new Playwright project from scratch, or wh
 
 Before running anything, check for:
 
-| File / folder                | Command                                     |
-| ---------------------------- | ------------------------------------------- |
-| `package.json`               | `test -f package.json`                      |
-| `@playwright/test` installed | `cat package.json \| grep @playwright/test` |
-| `playwright.config.ts`       | `test -f playwright.config.ts`              |
-| `tsconfig.json`              | `test -f tsconfig.json`                     |
+| File / folder                | Command                                         |
+| ---------------------------- | ----------------------------------------------- |
+| `e2e/package.json`           | `test -f e2e/package.json`                      |
+| `@playwright/test` installed | `cat e2e/package.json \| grep @playwright/test` |
+| `e2e/playwright.config.ts`   | `test -f e2e/playwright.config.ts`              |
+| `e2e/tsconfig.json`          | `test -f e2e/tsconfig.json`                     |
 
 Only run the steps that are actually missing. Never re-initialise what already exists.
 
@@ -31,16 +31,21 @@ Only run the steps that are actually missing. Never re-initialise what already e
 
 ## Step 2 — Install Playwright
 
-If `@playwright/test` is not in `package.json` dependencies:
+If `@playwright/test` is not in `e2e/package.json` dependencies:
 
 ```bash
-npm init -y              # only if package.json is missing
+mkdir -p e2e
+cd e2e
+npm init -y              # only if e2e/package.json is missing
 npm install -D @playwright/test
 npm install -D @types/node
 npx playwright install --with-deps
+cd ..
 ```
 
-> Always install `@types/node` so TypeScript can resolve Node.js globals (`process`, `__dirname`, etc.) used in `playwright.config.ts` and `global-setup.ts`.
+> All npm commands run from inside `e2e/` so that `node_modules/`, `package.json`, and `package-lock.json` are all scoped to the `e2e/` directory.
+
+> Always install `@types/node` so TypeScript can resolve Node.js globals (`process`, `__dirname`, etc.) used in `e2e/playwright.config.ts` and `e2e/global-setup.ts`.
 
 > `--with-deps` installs OS-level browser dependencies (needed in CI and clean macOS environments).
 
@@ -48,7 +53,7 @@ Do **not** run `npm init playwright@latest` — it overwrites config files and a
 
 ---
 
-## Step 3 — Create `tsconfig.json`
+## Step 3 — Create `e2e/tsconfig.json`
 
 Always create this if missing. Required for TypeScript path resolution and strict type-checking with Playwright.
 
@@ -66,7 +71,7 @@ Always create this if missing. Required for TypeScript path resolution and stric
 
 ---
 
-## Step 4 — Create `playwright.config.ts`
+## Step 4 — Create `e2e/playwright.config.ts`
 
 Create only if missing. Use this minimal, correct template:
 
@@ -97,25 +102,28 @@ export default defineConfig({
 Create any missing folders (do not overwrite existing ones):
 
 ```
-mkdir -p playwright/pages playwright/fixtures playwright/tests playwright/test-data playwright/docs
+mkdir -p e2e/pages e2e/fixtures e2e/tests e2e/test-data e2e/docs
 ```
 
 Expected layout after init:
 
 ```
 <project-root>/
-├── playwright/
-│   ├── pages/
-│   ├── fixtures/
-│   │   └── index.ts        ← create with base re-export (see below)
-│   ├── tests/
-│   ├── test-data/
-│   └── docs/
-├── playwright.config.ts
-└── tsconfig.json
+└── e2e/
+    ├── node_modules/
+    ├── package.json
+    ├── package-lock.json
+    ├── tsconfig.json
+    ├── playwright.config.ts
+    ├── pages/
+    ├── fixtures/
+    │   └── index.ts        ← create with base re-export (see below)
+    ├── tests/
+    ├── test-data/
+    └── docs/
 ```
 
-### `playwright/fixtures/index.ts` base content (if not present):
+### `e2e/fixtures/index.ts` base content (if not present):
 
 ```typescript
 import { test as base, expect } from '@playwright/test';
@@ -128,18 +136,18 @@ export { expect };
 
 ## Step 6 — Verify Installation
 
-Run a quick smoke check:
+Run a quick smoke check from inside `e2e/`:
 
 ```bash
-npx playwright test --list
+cd e2e && npx playwright test --list
 ```
 
 Expected: lists 0 tests (no spec files yet) without errors.
 If it errors, diagnose before proceeding — common causes:
 
-- Missing `tsconfig.json` → create it (Step 3)
+- Missing `e2e/tsconfig.json` → create it (Step 3)
 - Wrong `testDir` in config → correct the path
-- Browsers not installed → re-run `npx playwright install`
+- Browsers not installed → re-run `cd e2e && npx playwright install`
 
 ---
 
@@ -148,7 +156,7 @@ If it errors, diagnose before proceeding — common causes:
 On the **very first** run after generating test files, always run with `--update-snapshots` to create visual regression baselines:
 
 ```bash
-npx playwright test --update-snapshots
+cd e2e && npx playwright test --update-snapshots
 ```
 
 - Do **not** terminate the session until all tests pass.
@@ -159,12 +167,13 @@ npx playwright test --update-snapshots
 
 ## Checklist
 
-- [ ] `@playwright/test` in `devDependencies`
-- [ ] `@types/node` in `devDependencies`
-- [ ] Browsers installed (`npx playwright install`)
-- [ ] `tsconfig.json` present with `types: ["node", "@playwright/test"]`
-- [ ] `playwright.config.ts` present with correct `testDir` and `baseURL`
-- [ ] `pages/`, `fixtures/`, `tests/`, `test-data/` folders exist
-- [ ] `fixtures/index.ts` re-exports `test` and `expect`
-- [ ] `npx playwright test --list` runs without errors
-- [ ] First run uses `npx playwright test --update-snapshots` and all tests pass
+- [ ] `e2e/` directory exists
+- [ ] `@playwright/test` in `e2e/package.json` `devDependencies`
+- [ ] `@types/node` in `e2e/package.json` `devDependencies`
+- [ ] Browsers installed (`cd e2e && npx playwright install`)
+- [ ] `e2e/tsconfig.json` present with `types: ["node", "@playwright/test"]`
+- [ ] `e2e/playwright.config.ts` present with correct `testDir` and `baseURL`
+- [ ] `e2e/pages/`, `e2e/fixtures/`, `e2e/tests/`, `e2e/test-data/` folders exist
+- [ ] `e2e/fixtures/index.ts` re-exports `test` and `expect`
+- [ ] `cd e2e && npx playwright test --list` runs without errors
+- [ ] First run uses `cd e2e && npx playwright test --update-snapshots` and all tests pass

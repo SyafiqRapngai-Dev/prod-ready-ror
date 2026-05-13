@@ -1,7 +1,7 @@
 ---
 name: playwright-test-generator
-description: 'Reads a discovery report and test-plan from playwright/docs/ and generates Page Objects, fixtures, test data, spec files, and global-setup. Runs the full suite with --update-snapshots until all tests pass. Trigger phrases: generate tests, write tests, create page object, scaffold spec, generate POM from discovery, generate fixtures from discovery.'
-argument-hint: 'Path to discovery report (e.g. playwright/docs/inventory-page/inventory-page-discovery.md)'
+description: 'Reads a discovery report and test-plan from e2e/docs/ and generates Page Objects, fixtures, test data, spec files, and global-setup. Runs the full suite with --update-snapshots until all tests pass. Trigger phrases: generate tests, write tests, create page object, scaffold spec, generate POM from discovery, generate fixtures from discovery.'
+argument-hint: 'Path to discovery report (e.g. e2e/docs/inventory-page/inventory-page-discovery.md)'
 tools: [read, edit, search, execute]
 user-invocable: false
 ---
@@ -16,8 +16,8 @@ You are a senior Playwright engineer specialising in test authorship. You consum
 
 Before starting, verify that both required documents exist for the target page:
 
-1. **Discovery report** — `playwright/docs/<page-name>/<page-name>-discovery.md`. If it does not exist, stop and tell the user: **"No discovery report found. Run the `playwright-explorer` agent first and pass it the target URL."**
-2. **Test plan** — `playwright/docs/<page-name>/<page-name>-test-plan.md`. If it does not exist, stop and tell the user: **"No test plan found. The `playwright-explorer` agent must produce a test plan and the developer must approve it before test generation can begin."**
+1. **Discovery report** — `e2e/docs/<page-name>/<page-name>-discovery.md`. If it does not exist, stop and tell the user: **"No discovery report found. Run the `playwright-explorer` agent first and pass it the target URL."**
+2. **Test plan** — `e2e/docs/<page-name>/<page-name>-test-plan.md`. If it does not exist, stop and tell the user: **"No test plan found. The `playwright-explorer` agent must produce a test plan and the developer must approve it before test generation can begin."**
 
 Also verify the scaffold is present (same checklist as Phase 0 in `playwright-explorer`). If anything is missing, follow the `playwright-init` skill before generating files.
 
@@ -29,7 +29,7 @@ Also verify the scaffold is present (same checklist as Phase 0 in `playwright-ex
 
 Open both documents and extract the information needed to generate tests:
 
-**From `playwright/docs/<page-name>/<page-name>-discovery.md`:**
+**From `e2e/docs/<page-name>/<page-name>-discovery.md`:**
 
 - **Page name** and final URL
 - **Elements table** — all locators and their preferred selectors
@@ -37,9 +37,9 @@ Open both documents and extract the information needed to generate tests:
 - **Dynamic elements** — locators to `mask` in every `toHaveScreenshot` call
 - **Conditionally rendered states** — each state that needs its own dedicated test + snapshot
 - **Action methods** — the list of methods to implement on the Page Object
-- **Screenshots captured** — the list of `playwright/docs/*.png` files (used to confirm which states have baselines)
+- **Screenshots captured** — the list of `e2e/docs/*.png` files (used to confirm which states have baselines)
 
-**From `playwright/docs/<page-name>/<page-name>-test-plan.md`:**
+**From `e2e/docs/<page-name>/<page-name>-test-plan.md`:**
 
 - **Reusable POM elements** — existing Page Objects, locators, and action methods that must be reused rather than re-declared. Use this as the authoritative reuse list; do not re-audit independently.
 - **Proposed test cases** — the approved list of tests to generate, their types, and their justifications. Generate exactly the tests listed here. Do not add or remove tests without explicit instruction.
@@ -52,7 +52,7 @@ Open both documents and extract the information needed to generate tests:
 
 #### Step 0 — Apply the Reuse List from the Test Plan
 
-The test plan (`playwright/docs/<page-name>/<page-name>-test-plan.md`) already contains a reviewed reuse audit performed by `playwright-explorer`. Use it as the authoritative source:
+The test plan (`e2e/docs/<page-name>/<page-name>-test-plan.md`) already contains a reviewed reuse audit performed by `playwright-explorer`. Use it as the authoritative source:
 
 1. Read the "Reusable POM Elements" table from the test plan.
 2. For each item marked as reusable, do not re-declare that locator or method in the new Page Object — import and wire the existing Page Object through fixtures instead.
@@ -76,11 +76,11 @@ From the elements and action methods in the report, and after applying the reuse
 
 Generate files only if they don't already exist (check with search first). If they exist, append or update rather than overwrite.
 
-All generated files live inside the **`playwright/`** folder at the project root. Create the folder if it does not exist.
+All generated files live inside the **`e2e/`** folder at the project root. Create the folder if it does not exist.
 
 Generate in this order:
 
-#### `playwright/pages/<PageName>.ts`
+#### `e2e/pages/<PageName>.ts`
 
 Follow the Page Object template exactly:
 
@@ -118,7 +118,7 @@ export class <PageName>Page {
 }
 ```
 
-#### `playwright/test-data/users.ts` (only if login was detected in the report)
+#### `e2e/test-data/users.ts` (only if login was detected in the report)
 
 Add or update `TUser` type plus named exports for valid/invalid credentials:
 
@@ -129,7 +129,7 @@ export const validStandardUser: TUser = { username: 'standard_user', password: '
 export const invalidUser: TUser = { username: 'invalid_user', password: 'wrong_password' };
 ```
 
-#### `playwright/fixtures/index.ts`
+#### `e2e/fixtures/index.ts`
 
 - Extend the existing fixture file (or create it following the template below).
 - Add a fixture for the new page that navigates to the page URL before handing off.
@@ -155,7 +155,7 @@ export const test = base.extend<Fixtures>({
 export { expect };
 ```
 
-#### `playwright/tests/<feature>.spec.ts`
+#### `e2e/tests/<feature>.spec.ts`
 
 - Import `test` and `expect` from `../fixtures` — never from `@playwright/test` directly.
 - Write one `test()` per distinct user interaction or state from the discovery report.
@@ -198,7 +198,7 @@ test('visual regression — nav menu open', async ({ inventoryPage }) => {
 
 ### Phase 4 — storageState (if login was detected)
 
-If the discovery report flags login as detected, generate `playwright/global-setup.ts`:
+If the discovery report flags login as detected, generate `e2e/global-setup.ts`:
 
 ```typescript
 import { chromium } from '@playwright/test';
@@ -212,20 +212,20 @@ async function globalSetup() {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
   await loginPage.login(validStandardUser);
-  await page.context().storageState({ path: 'playwright/test-data/storageState.json' });
+  await page.context().storageState({ path: './test-data/storageState.json' });
   await browser.close();
 }
 
 export default globalSetup;
 ```
 
-Then add to `playwright.config.ts`:
+Then add to `e2e/playwright.config.ts`:
 
 ```typescript
-globalSetup: './playwright/global-setup',
-testDir: './playwright/tests',
+globalSetup: './global-setup',
+testDir: './tests',
 use: {
-  storageState: 'playwright/test-data/storageState.json',
+  storageState: './test-data/storageState.json',
 },
 ```
 
@@ -236,7 +236,7 @@ use: {
 After all files are generated, run with `--update-snapshots` to create visual regression baselines:
 
 ```bash
-npx playwright test --update-snapshots
+cd e2e && npx playwright test --update-snapshots
 ```
 
 - **Do not terminate the session until all tests pass.**
@@ -287,10 +287,10 @@ Use the same locator strategy that was recorded in the discovery report — do n
 
 After all files are generated and all tests pass, print a summary table:
 
-| File                                 | Action                   | Notes               |
-| ------------------------------------ | ------------------------ | ------------------- |
-| `playwright/pages/<PageName>.ts`     | Created / Updated        | List locators added |
-| `playwright/test-data/users.ts`      | Created / Updated        | Credentials added   |
-| `playwright/fixtures/index.ts`       | Created / Updated        | Fixtures added      |
-| `playwright/tests/<feature>.spec.ts` | Created                  | Test count          |
-| `playwright/global-setup.ts`         | Created (if login found) | storageState path   |
+| File                          | Action                   | Notes               |
+| ----------------------------- | ------------------------ | ------------------- |
+| `e2e/pages/<PageName>.ts`     | Created / Updated        | List locators added |
+| `e2e/test-data/users.ts`      | Created / Updated        | Credentials added   |
+| `e2e/fixtures/index.ts`       | Created / Updated        | Fixtures added      |
+| `e2e/tests/<feature>.spec.ts` | Created                  | Test count          |
+| `e2e/global-setup.ts`         | Created (if login found) | storageState path   |

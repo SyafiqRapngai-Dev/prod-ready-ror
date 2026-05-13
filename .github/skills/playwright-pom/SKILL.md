@@ -21,23 +21,24 @@ Always use this folder layout:
 
 ```
 <project-root>/
-├── pages/                    # One file per page of the app
-│   └── <PageName>.ts
-├── fixtures/
-│   └── index.ts              # All custom fixtures + re-export of expect
-├── tests/                    # Test files only — no setup logic here
-│   └── <feature>.spec.ts
-├── test-data/                # Centralised test data — no magic strings in tests
-│   └── users.ts
-├── playwright.config.ts
-└── tsconfig.json
+└── e2e/
+    ├── pages/                    # One file per page of the app
+    │   └── <PageName>.ts
+    ├── fixtures/
+    │   └── index.ts              # All custom fixtures + re-export of expect
+    ├── tests/                    # Test files only — no setup logic here
+    │   └── <feature>.spec.ts
+    ├── test-data/                # Centralised test data — no magic strings in tests
+    │   └── users.ts
+    ├── playwright.config.ts
+    └── tsconfig.json
 ```
 
 ---
 
-## Step 1 — tsconfig.json
+## Step 1 — e2e/tsconfig.json
 
-Create at project root if missing:
+Create at `e2e/tsconfig.json` if missing:
 
 ```json
 {
@@ -56,7 +57,7 @@ Create at project root if missing:
 
 ---
 
-## Step 2 — playwright.config.ts (key settings)
+## Step 2 — e2e/playwright.config.ts (key settings)
 
 ```typescript
 import { defineConfig } from '@playwright/test';
@@ -73,7 +74,7 @@ export default defineConfig({
 
 ---
 
-## Step 3 — Page Object template (`pages/<PageName>.ts`)
+## Step 3 — Page Object template (`e2e/pages/<PageName>.ts`)
 
 ```typescript
 import { Page, Locator } from '@playwright/test';
@@ -110,7 +111,7 @@ export class <PageName> {
 
 ---
 
-## Step 4 — Test data (`test-data/users.ts`)
+## Step 4 — Test data (`e2e/test-data/users.ts`)
 
 ```typescript
 export type TUser = {
@@ -131,7 +132,7 @@ export const invalidUser: TUser = {
 
 ---
 
-## Step 5 — Fixtures (`fixtures/index.ts`)
+## Step 5 — Fixtures (`e2e/fixtures/index.ts`)
 
 ```typescript
 import { test as base } from '@playwright/test';
@@ -167,7 +168,7 @@ export { expect } from '@playwright/test';
 
 ---
 
-## Step 6 — Test file (`tests/<feature>.spec.ts`)
+## Step 6 — Test file (`e2e/tests/<feature>.spec.ts`)
 
 ```typescript
 import { test, expect } from '../fixtures'; // ← always import from fixtures, not @playwright/test
@@ -215,7 +216,7 @@ test('visual regression — nav menu open', async ({ inventoryPage }) => {
 | One import source                           | Tests import `test` and `expect` from `../fixtures`, not `@playwright/test`                                                                                                                                                                    |
 | No magic strings in tests                   | All selectors in Page Objects, all data in `test-data/`                                                                                                                                                                                        |
 | Install `@types/node`                       | Always run `npm i -D @types/node` so Node globals resolve in TypeScript                                                                                                                                                                        |
-| First run uses --update-snapshots           | Run `npx playwright test --update-snapshots` on the first run to create visual baselines; do not end the session until all tests pass                                                                                                          |
+| First run uses --update-snapshots           | Run `cd e2e && npx playwright test --update-snapshots` on the first run to create visual baselines; do not end the session until all tests pass                                                                                                |
 | Visual regression for error states          | Every error state test must include `await expect(page).toHaveScreenshot('<page>-error-state.png')` immediately after the error element is confirmed visible                                                                                   |
 | Visual regression for conditional UI states | Every element revealed by user interaction (menu, modal, drawer, dropdown) needs its own test: trigger the interaction, assert the element is visible, then call `toHaveScreenshot` with a state-describing name (e.g. `<page>-menu-open.png`) |     | Mask dynamic elements | During exploration, identify elements with content that changes between runs (copyright year, timestamps, session data, third-party widgets). Pass them as `mask: [page.locator('...')]` in every `toHaveScreenshot` call where they appear. |
 | Full-page screenshots                       | Always pass `fullPage: true` to every `toHaveScreenshot` call to capture content below the fold, not just the visible viewport.                                                                                                                |
