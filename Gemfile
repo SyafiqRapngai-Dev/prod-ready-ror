@@ -31,7 +31,7 @@ gem "pg_search", "~> 2.3"
 gem "image_processing", "~> 1.2"
 
 # Utilities
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.5"
 
 group :development, :test do
   gem "rspec-rails", "~> 7.0"
